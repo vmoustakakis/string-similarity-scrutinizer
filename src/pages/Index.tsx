@@ -1,6 +1,7 @@
 
 import { StringComparison } from "@/components/StringComparison";
 import { URLConverter } from "@/components/URLConverter";
+import { JSONFormatter } from "@/components/JSONFormatter";
 import { Separator } from "@/components/ui/separator";
 
 const Index = () => {
@@ -9,7 +10,7 @@ const Index = () => {
       <header className="mb-8 text-center">
         <h1 className="text-3xl font-bold text-indigo-800 mb-2">String Tools</h1>
         <p className="text-slate-600 max-w-md mx-auto">
-          Compare strings and convert URL encodings all in one place
+          Compare strings, convert URLs, and format JSON all in one place
         </p>
       </header>
       
@@ -21,9 +22,16 @@ const Index = () => {
         
         <Separator className="my-8" />
         
-        <section>
+        <section className="mb-12">
           <h2 className="text-2xl font-semibold text-indigo-700 mb-6">URL Encoding/Decoding</h2>
           <URLConverter />
+        </section>
+        
+        <Separator className="my-8" />
+        
+        <section>
+          <h2 className="text-2xl font-semibold text-indigo-700 mb-6">JSON Formatter</h2>
+          <JSONFormatter />
         </section>
       </main>
       
