@@ -31,6 +31,7 @@ export function StringComparison() {
             value={string1}
             onChange={(e) => setString1(e.target.value)}
             className="min-h-[150px] font-mono"
+            showLineNumbers={true}
           />
         </Card>
         
@@ -41,6 +42,7 @@ export function StringComparison() {
             value={string2}
             onChange={(e) => setString2(e.target.value)}
             className="min-h-[150px] font-mono"
+            showLineNumbers={true}
           />
         </Card>
       </div>
