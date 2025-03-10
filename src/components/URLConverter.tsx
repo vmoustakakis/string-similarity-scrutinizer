@@ -27,7 +27,7 @@ export function URLConverter() {
   };
 
   return (
-    <div className="flex flex-col space-y-6 w-full max-w-4xl mx-auto">
+    <div className="flex flex-col space-y-6 w-full max-w-5xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="p-4">
           <h2 className="text-lg font-medium mb-2">Input Text</h2>
@@ -35,7 +35,7 @@ export function URLConverter() {
             placeholder={mode === 'encode' ? "Enter text to encode..." : "Enter text to decode..."}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            className="min-h-[150px] font-mono"
+            className="min-h-[250px] font-mono"
             showLineNumbers={true}
           />
         </Card>
@@ -46,7 +46,7 @@ export function URLConverter() {
             placeholder="Result will appear here..."
             value={outputText}
             readOnly
-            className="min-h-[150px] font-mono"
+            className="min-h-[250px] font-mono"
             showLineNumbers={true}
           />
         </Card>

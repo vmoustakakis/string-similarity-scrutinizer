@@ -14,7 +14,7 @@ const Index = () => {
         </p>
       </header>
       
-      <main className="flex-1 w-full max-w-5xl mx-auto">
+      <main className="flex-1 w-full max-w-6xl mx-auto">
         <section className="mb-12">
           <h2 className="text-2xl font-semibold text-indigo-700 mb-6">String Comparison</h2>
           <StringComparison />
