@@ -15,41 +15,73 @@ export function compareStrings(str1: string, str2: string) {
   const lines1 = str1.split('\n');
   const lines2 = str2.split('\n');
   
+  // Use Longest Common Subsequence to find the best alignment
+  const lcsMatrix = buildLCSMatrix(lines1, lines2);
+  const diff = backtrackLCS(lines1, lines2, lcsMatrix);
+  
+  // Convert the diff to our result format with newlines
   const result: Array<{ type: 'equal' | 'removed' | 'added', value: string }> = [];
   
-  // Compare each line
-  const maxLines = Math.max(lines1.length, lines2.length);
+  diff.forEach(item => {
+    if (item.type === 'equal') {
+      result.push({ type: 'equal', value: item.value + '\n' });
+    } else if (item.type === 'removed') {
+      result.push({ type: 'removed', value: item.value + '\n' });
+    } else if (item.type === 'added') {
+      result.push({ type: 'added', value: item.value + '\n' });
+    }
+  });
   
-  for (let i = 0; i < maxLines; i++) {
-    const line1 = i < lines1.length ? lines1[i] : null;
-    const line2 = i < lines2.length ? lines2[i] : null;
-    
-    if (line1 === null) {
-      // Line only exists in the second string
-      result.push({ type: 'added', value: line2 + '\n' });
-    } else if (line2 === null) {
-      // Line only exists in the first string
-      result.push({ type: 'removed', value: line1 + '\n' });
-    } else if (line1 === line2) {
-      // Lines are identical
-      result.push({ type: 'equal', value: line1 + '\n' });
-    } else {
-      // Lines differ, we need to find specific differences within the line
-      const lineDiff = compareLineContent(line1, line2);
-      result.push(...lineDiff);
-      
-      // Add newline after the last part of the line
-      if (lineDiff.length > 0) {
-        const lastPart = lineDiff[lineDiff.length - 1];
-        result[result.length - 1] = { 
-          ...lastPart, 
-          value: lastPart.value + '\n' 
-        };
+  return result;
+}
+
+/**
+ * Builds a matrix for the Longest Common Subsequence algorithm
+ */
+function buildLCSMatrix(lines1: string[], lines2: string[]) {
+  const matrix = Array(lines1.length + 1)
+    .fill(null)
+    .map(() => Array(lines2.length + 1).fill(0));
+  
+  for (let i = 1; i <= lines1.length; i++) {
+    for (let j = 1; j <= lines2.length; j++) {
+      if (lines1[i - 1] === lines2[j - 1]) {
+        matrix[i][j] = matrix[i - 1][j - 1] + 1;
+      } else {
+        matrix[i][j] = Math.max(matrix[i - 1][j], matrix[i][j - 1]);
       }
     }
   }
   
-  return result;
+  return matrix;
+}
+
+/**
+ * Backtrack through the LCS matrix to find the actual diff
+ */
+function backtrackLCS(lines1: string[], lines2: string[], matrix: number[][]) {
+  const diff: Array<{ type: 'equal' | 'removed' | 'added', value: string }> = [];
+  let i = lines1.length;
+  let j = lines2.length;
+  
+  while (i > 0 || j > 0) {
+    if (i > 0 && j > 0 && lines1[i - 1] === lines2[j - 1]) {
+      // Equal lines
+      diff.unshift({ type: 'equal', value: lines1[i - 1] });
+      i--;
+      j--;
+    } else if (j > 0 && (i === 0 || matrix[i][j - 1] >= matrix[i - 1][j])) {
+      // Line added in the second string
+      diff.unshift({ type: 'added', value: lines2[j - 1] });
+      j--;
+    } else if (i > 0) {
+      // Line removed from the first string
+      diff.unshift({ type: 'removed', value: lines1[i - 1] });
+      i--;
+    }
+  }
+  
+  return diff;
 }
 
 /**

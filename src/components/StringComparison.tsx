@@ -30,7 +30,7 @@ export function StringComparison() {
             placeholder="Enter first string here..." 
             value={string1}
             onChange={(e) => setString1(e.target.value)}
-            className="min-h-[250px] font-mono"
+            className="min-h-[300px] font-mono w-full"
             showLineNumbers={true}
           />
         </Card>
@@ -41,7 +41,7 @@ export function StringComparison() {
             placeholder="Enter second string here..." 
             value={string2}
             onChange={(e) => setString2(e.target.value)}
-            className="min-h-[250px] font-mono"
+            className="min-h-[300px] font-mono w-full"
             showLineNumbers={true}
           />
         </Card>
