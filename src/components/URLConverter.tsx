@@ -35,7 +35,7 @@ export function URLConverter() {
             placeholder={mode === 'encode' ? "Enter text to encode..." : "Enter text to decode..."}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            className="min-h-[500px] font-mono"
+            className="min-h-[150px] font-mono"
             showLineNumbers={true}
           />
         </Card>
@@ -46,7 +46,7 @@ export function URLConverter() {
             placeholder="Result will appear here..."
             value={outputText}
             readOnly
-            className="min-h-[500px] font-mono"
+            className="min-h-[150px] font-mono"
             showLineNumbers={true}
           />
         </Card>
