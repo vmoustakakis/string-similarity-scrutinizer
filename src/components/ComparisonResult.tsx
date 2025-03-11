@@ -22,39 +22,97 @@ export function ComparisonResult({ diffResult }: ComparisonResultProps) {
     );
   }
   
-  // Process the diff result to organize by lines
+  // Process the diff result to organize by lines and remove trailing empty lines
   const processedContent = diffResult.reduce((acc, part) => {
     const lines = part.value.split('\n');
     
+    // Skip empty lines at the end
+    if (part.value.endsWith('\n')) {
+      lines.pop();
+    }
+    
     lines.forEach((line, index) => {
       // If not the last line or if the line ends with a newline character
-      if (index < lines.length - 1 || part.value.endsWith('\n')) {
-        acc.push({ type: part.type, value: line, endsWithNewline: true });
-      } else {
-        acc.push({ type: part.type, value: line, endsWithNewline: false });
-      }
+      const endsWithNewline = index < lines.length - 1 || part.value.endsWith('\n');
+      acc.push({ type: part.type, value: line, endsWithNewline });
     });
     
     return acc;
   }, [] as Array<{ type: 'equal' | 'removed' | 'added', value: string, endsWithNewline: boolean }>);
   
-  // Group the processed content by lines
-  const lines: Array<Array<{ type: 'equal' | 'removed' | 'added', value: string }>> = [];
-  let currentLine: Array<{ type: 'equal' | 'removed' | 'added', value: string }> = [];
+  // Group the processed content into diff chunks
+  const diffChunks: Array<{
+    type: 'unchanged' | 'modified',
+    content: Array<{ type: 'equal' | 'removed' | 'added', value: string, endsWithNewline: boolean }>
+  }> = [];
+  
+  let currentChunk: {
+    type: 'unchanged' | 'modified',
+    content: Array<{ type: 'equal' | 'removed' | 'added', value: string, endsWithNewline: boolean }>
+  } | null = null;
   
   processedContent.forEach((part) => {
-    currentLine.push({ type: part.type, value: part.value });
-    
-    if (part.endsWithNewline) {
-      lines.push([...currentLine]);
-      currentLine = [];
+    if (part.type === 'equal') {
+      if (!currentChunk || currentChunk.type === 'modified') {
+        if (currentChunk) {
+          diffChunks.push(currentChunk);
+        }
+        currentChunk = { type: 'unchanged', content: [part] };
+      } else {
+        currentChunk.content.push(part);
+      }
+    } else {
+      if (!currentChunk || currentChunk.type === 'unchanged') {
+        if (currentChunk) {
+          diffChunks.push(currentChunk);
+        }
+        currentChunk = { type: 'modified', content: [part] };
+      } else {
+        currentChunk.content.push(part);
+      }
     }
   });
   
-  // Add the last line if it exists
-  if (currentLine.length > 0) {
-    lines.push(currentLine);
+  if (currentChunk) {
+    diffChunks.push(currentChunk);
   }
+  
+  // Transform chunks into display lines
+  const displayLines: Array<{
+    lineNumber: number | null,
+    content: { type: 'equal' | 'removed' | 'added', value: string }
+  }> = [];
+  
+  let lineCounter = 1;
+  
+  diffChunks.forEach(chunk => {
+    if (chunk.type === 'unchanged') {
+      chunk.content.forEach(part => {
+        displayLines.push({
+          lineNumber: lineCounter++,
+          content: { type: part.type, value: part.value }
+        });
+      });
+    } else {
+      // For modified chunks, add removed lines first with line numbers
+      const removedLines = chunk.content.filter(part => part.type === 'removed');
+      removedLines.forEach(part => {
+        displayLines.push({
+          lineNumber: lineCounter++,
+          content: { type: part.type, value: part.value }
+        });
+      });
+      
+      // Then add added lines without line numbers
+      const addedLines = chunk.content.filter(part => part.type === 'added');
+      addedLines.forEach(part => {
+        displayLines.push({
+          lineNumber: null,
+          content: { type: part.type, value: part.value }
+        });
+      });
+    }
+  });
   
   return (
     <div className="space-y-4">
@@ -68,37 +126,37 @@ export function ComparisonResult({ diffResult }: ComparisonResultProps) {
         <div className="flex">
           {/* Line numbers */}
           <div className="flex-shrink-0 select-none py-2 px-2 text-right text-muted-foreground bg-muted border-r border-input" style={{ width: '3rem' }}>
-            {lines.map((_, index) => (
-              <div key={index} className="leading-6">{index + 1}</div>
+            {displayLines.map((line, index) => (
+              <div key={index} className="leading-6">
+                {line.lineNumber !== null ? line.lineNumber : ''}
+              </div>
             ))}
           </div>
           
           {/* Content with highlight */}
           <div className="flex-grow p-2 bg-background whitespace-pre-wrap break-all">
-            {lines.map((line, lineIndex) => (
-              <div key={lineIndex} className="leading-6">
-                {line.map((part, partIndex) => {
-                  let className = '';
-                  
-                  switch (part.type) {
-                    case 'added':
-                      className = 'bg-green-100 text-green-800';
-                      break;
-                    case 'removed':
-                      className = 'bg-red-100 text-red-800';
-                      break;
-                    default:
-                      className = '';
-                  }
-                  
-                  return (
-                    <span key={partIndex} className={className}>
-                      {part.value}
-                    </span>
-                  );
-                })}
-              </div>
-            ))}
+            {displayLines.map((line, index) => {
+              let className = '';
+              
+              switch (line.content.type) {
+                case 'added':
+                  className = 'bg-green-100 text-green-800';
+                  break;
+                case 'removed':
+                  className = 'bg-red-100 text-red-800';
+                  break;
+                default:
+                  className = '';
+              }
+              
+              return (
+                <div key={index} className="leading-6">
+                  <span className={className}>
+                    {line.content.value}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

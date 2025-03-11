@@ -22,7 +22,7 @@ export function StringComparison() {
   };
 
   return (
-    <div className="flex flex-col space-y-6 w-full max-w-5xl mx-auto">
+    <div className="flex flex-col space-y-6 w-full mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="p-4">
           <h2 className="text-lg font-medium mb-2">String 1</h2>
@@ -30,7 +30,7 @@ export function StringComparison() {
             placeholder="Enter first string here..." 
             value={string1}
             onChange={(e) => setString1(e.target.value)}
-            className="min-h-[300px] font-mono w-full"
+            className="min-h-[400px] font-mono w-full"
             showLineNumbers={true}
           />
         </Card>
@@ -41,7 +41,7 @@ export function StringComparison() {
             placeholder="Enter second string here..." 
             value={string2}
             onChange={(e) => setString2(e.target.value)}
-            className="min-h-[300px] font-mono w-full"
+            className="min-h-[400px] font-mono w-full"
             showLineNumbers={true}
           />
         </Card>
