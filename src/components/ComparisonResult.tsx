@@ -96,6 +96,9 @@ export function ComparisonResult({ diffResult }: ComparisonResultProps) {
     } else {
       // For modified chunks, add removed lines first with line numbers
       const removedLines = chunk.content.filter(part => part.type === 'removed');
+      const addedLines = chunk.content.filter(part => part.type === 'added');
+      
+      // Only add line numbers to the removed lines
       removedLines.forEach(part => {
         displayLines.push({
           lineNumber: lineCounter++,
@@ -103,8 +106,7 @@ export function ComparisonResult({ diffResult }: ComparisonResultProps) {
         });
       });
       
-      // Then add added lines without line numbers
-      const addedLines = chunk.content.filter(part => part.type === 'added');
+      // Added lines always have null line numbers
       addedLines.forEach(part => {
         displayLines.push({
           lineNumber: null,

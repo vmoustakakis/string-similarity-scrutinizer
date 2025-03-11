@@ -27,26 +27,26 @@ export function URLConverter() {
   };
 
   return (
-    <div className="flex flex-col space-y-6 w-full max-w-5xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="p-4">
+    <div className="flex flex-col space-y-6 w-full max-w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="p-4 w-full">
           <h2 className="text-lg font-medium mb-2">Input Text</h2>
           <Textarea 
             placeholder={mode === 'encode' ? "Enter text to encode..." : "Enter text to decode..."}
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            className="min-h-[250px] font-mono"
+            className="min-h-[500px] font-mono"
             showLineNumbers={true}
           />
         </Card>
         
-        <Card className="p-4">
+        <Card className="p-4 w-full">
           <h2 className="text-lg font-medium mb-2">Output Text</h2>
           <Textarea 
             placeholder="Result will appear here..."
             value={outputText}
             readOnly
-            className="min-h-[250px] font-mono"
+            className="min-h-[500px] font-mono"
             showLineNumbers={true}
           />
         </Card>
